@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeatWise - Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="[https://fonts.googleapis.com](https://fonts.googleapis.com)">
+    <link rel="preconnect" href="[https://fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
+    <link href="[https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Quicksand:wght@400;500;700&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Quicksand:wght@400;500;700&display=swap)" rel="stylesheet">
+</head>
+<body>
+    <div class="page-wrapper">
+        <div class="container">
+            <header class="main-header">
+                <div class="logo">BeatWise</div>
+                <p class="subtitle">Intelligent ECG Analysis for Patients and Clinicians</p>
+            </header>
+
+            <main class="card">
+                <form id="upload-form" action="{{ url_for('process') }}" method="post" enctype="multipart/form-data">
+                    <h2 class="card-title">Upload Your ECG File</h2>
+                    <p class="card-description">Select a single `.dat` file from your device to begin the analysis.</p>
+                    <div class="file-upload-wrapper">
+                        <label for="ecg-file-input" class="file-upload-button">
+                            <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            <span>Choose File</span>
+                        </label>
+                        <input type="file" id="ecg-file-input" name="ecg_file" accept=".dat" hidden>
+                        <p id="file-name-display">No file selected.</p>
+                    </div>
+                    <button type="submit" id="analyze-button" class="cta-button" disabled>Analyze Heartbeat</button>
+                </form>
+            </main>
+        </div>
+    </div>
+    <footer>
+        <p>Made by Snehas Kale and Vishnu Raj 2025</p>
+    </footer>
+
+    <script>
+        const fileInput = document.getElementById('ecg-file-input');
+        const fileNameDisplay = document.getElementById('file-name-display');
+        const analyzeButton = document.getElementById('analyze-button');
+        const uploadForm = document.getElementById('upload-form');
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                const fileName = fileInput.files[0].name;
+                if (fileName.toLowerCase().endsWith('.dat')) {
+                    fileNameDisplay.textContent = fileName;
+                    analyzeButton.disabled = false;
+                } else {
+                    fileNameDisplay.textContent = 'Invalid file type. Please select a .dat file.';
+                    analyzeButton.disabled = true;
+                }
+            } else {
+                fileNameDisplay.textContent = 'No file selected.';
+                analyzeButton.disabled = true;
+            }
+        });
+
+        uploadForm.addEventListener('submit', (e) => {
+            if (analyzeButton.disabled) {
+                e.preventDefault();
+            } else {
+                analyzeButton.textContent = 'Uploading...';
+                analyzeButton.classList.add('processing');
+            }
+        });
+    </script>
+</body>
+</html>

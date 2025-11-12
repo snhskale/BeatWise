@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeatWise - Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
+    
+</head>
+<body>
+    <div class="page-wrapper">
+        <div class="container processing-page">
+            <!-- Progress Animation (No changes) -->
+            <div id="progress-container" class="card">
+                <h2 class="card-title">Analyzing Your ECG</h2>
+                <p class="card-description">Our AI agents are at work. This will just take a moment.</p>
+                <div class="progress-steps-wrapper">
+                    <div class="progress-step" id="step1">
+                        <div class="progress-icon-wrapper"><div class="progress-icon">1</div></div>
+                        <p>Preprocessing Signal</p>
+                    </div>
+                    <div class="progress-step" id="step2">
+                        <div class="progress-icon-wrapper"><div class="progress-icon">2</div></div>
+                        <p>Classifying Heartbeats</p>
+                    </div>
+                    <div class="progress-step" id="step3">
+                        <div class="progress-icon-wrapper"><div class="progress-icon">3</div></div>
+                        <p>Generating Reports</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Display (Initially Hidden) -->
+            <div id="results-container" style="display: none;">
+                <header class="results-header">
+                    <h1>Analysis Complete</h1>
+                    <p class="subtitle">Here are the generated reports for your ECG analysis.</p>
+                </header>
+                <div class="reports-wrapper">
+                    <div class="report-card" id="doctor-report-card">
+                        <h2>Doctor's Report</h2>
+                        <!-- 
+                          MODIFIED: We now access the dictionary keys from the backend 
+                        -->
+                        <div class="report-content">
+                            <h3>Key Metrics</h3>
+                            <ul class="metrics-list">
+                                <li><strong>Average BPM:</strong> <span>{{ doctor_report_data.avg_bpm }}</span></li>
+                                <li><strong>HRV (SDNN):</strong> <span>{{ doctor_report_data.sdnn }}</span></li>
+                                <li><strong>Total Beats Analyzed:</strong> <span>{{ doctor_report_data.total_beats }}</span></li>
+                                <li><strong>Tachycardia Present:</strong> <span>{{ doctor_report_data.tachycardia }}</span></li>
+                                <li><strong>Bradycardia Present:</strong> <span>{{ doctor_report_data.bradycardia }}</span></li>
+                            </ul>
+
+                            <h3>Beat Distribution</h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Beat Type</th>
+                                        <th>Count</th>
+                                        <th>Percentage</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- We loop over the list of beats -->
+                                    {% for beat in doctor_report_data.beat_distribution %}
+                                    <tr>
+                                        <td><strong>{{ beat.type }}</strong></td>
+                                        <td>{{ beat.count }}</td>
+                                        <td>{{ beat.percentage }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            
+                            <h3>Key Findings</h3>
+                            <ul class="findings-list">
+                                <!-- We loop over the findings and check for URGENT flag -->
+                                {% for finding in doctor_report_data.key_findings %}
+                                    <li class="{% if 'URGENT' in finding %}finding-urgent{% endif %}">
+                                        {{ finding }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="report-card" id="patient-report-card">
+                        <h2>Patient's Report</h2>
+                        <!-- 
+                          MODIFIED: We now loop over the sections array 
+                        -->
+                        <div class="report-content">
+                            {% for section in patient_report_data.sections %}
+                            <div class="patient-section">
+                                <h4>{{ section.heading }}</h4>
+                                <p>{{ section.text }}</p>
+                            </div>
+                            {% endfor %}
+
+                            <p class="disclaimer">{{ patient_report_data.disclaimer }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>Made by Snehas Kale and Vishnu Raj 2025</p>
+    </footer>
+
+    <!-- Your existing JavaScript (no changes needed) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const step1 = document.getElementById('step1');
+            const step2 = document.getElementById('step2');
+            const step3 = document.getElementById('step3');
+            const progressContainer = document.getElementById('progress-container');
+            const resultsContainer = document.getElementById('results-container');
+
+            setTimeout(() => {
+                step1.classList.add('completed');
+            }, 500);
+
+            setTimeout(() => {
+                step2.classList.add('completed');
+            }, 1500);
+
+            setTimeout(() => {
+                step3.classList.add('completed');
+            }, 2500);
+            
+            setTimeout(() => {
+                progressContainer.style.opacity = 0;
+                progressContainer.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    progressContainer.style.display = 'none';
+                    resultsContainer.style.display = 'block';
+                }, 400);
+            }, 3500);
+        });
+    </script>
+</body>
+</html>
