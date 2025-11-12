@@ -37,7 +37,7 @@ This resulted in a final, balanced **training set of 140,000 heartbeats**, while
 The system is a 3-part Python pipeline that processes data sequentially. The `app.py` (Flask server) coordinates the execution of these modules.
 
 1.  **Preprocessing Module (`preprocessing_agent.py`)**
-    * **Input:** A raw file path (e.g., `arrhythmia_database_1/208.dat`).
+    * **Input:** A raw file path.
     * **Process:** Loads the raw signal using `wfdb`, applies the 0.5-40 Hz Butterworth filter, detects all R-peaks using `biosppy` (Pan-Tompkins), and segments the filtered signal into 280-sample heartbeats.
     * **Output:** A dictionary containing the NumPy array of normalized segments, R-peak locations, and the sampling frequency.
 
@@ -66,9 +66,9 @@ This project's main finding is the critical difference between "model accuracy" 
 
 * **Model Accuracy (99.4%):** Our 1D-ResNet model is exceptionally accurate when tested on the *aligned* test set (from `model_building.ipynb`, Cell 7). This data was perfectly segmented, providing a "clean" academic benchmark.
 
-* **System Accuracy (73.50%):** When running the full, end-to-end pipeline on a raw file (`model_building.ipynb`, Cell 8, Record 208), the accuracy drops significantly.
+* **System Accuracy (73.50%):** When running the full, end-to-end pipeline on a raw file, the accuracy drops.
 
-* **Reason (Pipeline Misalignment):** This is not a model failure. The `biosppy` R-peak detector in the preprocessor, while robust, does not segment beats at the *exact* same sample as the original 1980s expert annotations. This "off-center" segmentation (especially on 'V' beats) confuses the model, which was trained on "perfectly" centered beats. This 73.50% represents a realistic, real-world baseline for the *current* system.
+* **Reason (Pipeline Misalignment):** This is not a model failure. The `biosppy` R-peak detector in the preprocessor, while robust, does not segment beats at the *exact* same sample as the original expert annotations. This "off-center" segmentation (especially on 'V' beats) confuses the model, which was trained on "perfectly" centered beats. This 73.50% represents a realistic, real-world baseline for the *current* system.
 
 ## Technologies Used
 
@@ -108,7 +108,7 @@ This project's main finding is the critical difference between "model accuracy" 
 
 4.  **Place Data:**
     * Ensure your `final_model.pth` is in the root folder.
-    * Ensure your raw data folder (e.g., `arrhythmia_database_1`) is in the root folder.
+    * Ensure your raw data folder(after converted and made using preprocessing agent) is in the root folder.
 
 5.  **Run the Flask Web App:**
     ```bash
@@ -117,5 +117,5 @@ This project's main finding is the critical difference between "model accuracy" 
 
 6.  **Use the App:**
     * Open your web browser to `http://127.0.0.1:5000`.
-    * Upload a `.dat` file from your `arrhythmia_database_1` folder (e.g., `208.dat` or `100.dat`) and click "Analyze".
+    * Upload a `.dat` file from your dataset folder(MIT Arrhythmia Database or Supraventricular Arrhythmia Database) and click "Analyze".
     * **Note:** You must also have the corresponding `.hea` file (e.g., `208.hea`) in the *same folder* for the `wfdb` library to read the `.dat` file.
